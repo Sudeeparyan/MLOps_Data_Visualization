@@ -4,6 +4,8 @@ on:
     branches: [ main, master,Devops ]
   pull_request:
     branches: [ main, master,Devops ]
+  workflow_dispatch:
+  
 jobs:
   test:
     timeout-minutes: 60
