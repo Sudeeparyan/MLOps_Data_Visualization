@@ -1,0 +1,15 @@
+.content{
+    padding: 15px;
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+}
+.heading{
+    font-size: 22px;
+    margin: 20px;
+    color: rgb(0, 0, 0);
+    opacity: 0.9;
+}
+.upload{
+    color: rgb(1, 212, 1);
+}
