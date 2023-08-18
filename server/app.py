@@ -22,10 +22,13 @@ app = create_app()
 app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app)
 
+production=True 
+if(production):
+    os.chdir("/home/SudeepAryan/DevOps_DV/server")
+    
 # configuring the static folder path for flask app
 static_folder_path = os.path.abspath(os.path.join(os.getcwd(), '..', 'dist', 'assets'))
 app.static_folder = static_folder_path
-
 
 def initialize_db():
     """Setting up sqllite3 connectivity"""
