@@ -5,7 +5,7 @@ import os
 import pickle
 import datetime
 
-def prediction_using_trained_model(model_path: str, file_path: str, project_id: int) -> str:
+def Generate_predictions_using_trained_model(model_path: str, file_path: str, project_id: int) -> str:
     """Using the best fit model to predict the actual data
 
     Args:
