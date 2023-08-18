@@ -25,25 +25,120 @@ export const sendExcelCsv = createApi({
       async onQueryStarted(res, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(rootActions.excelActions.storeExcelid(data));
+          if (data.error === null) {
+            dispatch(rootActions.excelActions.storeExcelid(data));
+          } else
+            dispatch(
+              rootActions.notificationActions.storeNotification({
+                type: "error",
+                message: data.error,
+              })
+            );
         } catch (err) {
-          alert("Error:", err);
+          dispatch(
+            rootActions.notificationActions.storeNotification({
+              type: "error",
+              message: err.error.error,
+            })
+          );
         }
       },
     }),
     // Query for receiving Excel CSV data from the server based on an 'id'
     getExcel: builder.query({
-      query: (id) => endpointsApi.get_Excel_csv + `${id}`,
+      query: ({ projectId, pageNo }) =>
+        endpointsApi.get_Excel_csv + `${projectId}?page=${pageNo}`,
       async onQueryStarted(res, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(rootActions.excelActions.storeExcelCsv(data));
+          if (data.error === null) {
+            dispatch(rootActions.excelActions.storeExcelCsv(data));
+            dispatch(rootActions.excelActions.storePgno(data.nextPage));
+            if (data.nextPage === 2 || data.nextPage === null)
+              dispatch(
+                rootActions.notificationActions.storeNotification({
+                  type: "success",
+                  message: "File Loaded Successfully",
+                })
+              );
+          } else
+            dispatch(
+              rootActions.notificationActions.storeNotification({
+                type: "error",
+                message: data.error,
+              })
+            );
         } catch (err) {
-          alert("Error:", err);
+          dispatch(
+            rootActions.notificationActions.storeNotification({
+              type: "error",
+              message: err.error.error,
+            })
+          );
+        }
+      },
+    }),
+    generateGraph: builder.mutation({
+      query: (id) => ({
+        url: endpointsApi.create_model,
+        method: "POST",
+        body: id,
+      }),
+      async onQueryStarted(res, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+
+          if (data.error === null) {
+            dispatch(rootActions.excelActions.storeModelid(data));
+          } else
+            dispatch(
+              rootActions.notificationActions.storeNotification({
+                type: "error",
+                message: data.error,
+              })
+            );
+        } catch (err) {
+          dispatch(
+            rootActions.notificationActions.storeNotification({
+              type: "error",
+              message: err.error.error,
+            })
+          );
+        }
+      },
+    }),
+    getGraphResult: builder.query({
+      query: ({ projectId, modelId }) =>
+        endpointsApi.get_graph_data + `${projectId}/${modelId}`,
+      async onQueryStarted(res, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data.error === null) {
+            dispatch(rootActions.excelActions.storeGraph(data));
+          } else {
+            dispatch(
+              rootActions.notificationActions.storeNotification({
+                type: "error",
+                message: data.error,
+              })
+            );
+          }
+        } catch (err) {
+          dispatch(
+            rootActions.notificationActions.storeNotification({
+              type: "error",
+              message: err.error.error,
+            })
+          );
         }
       },
     }),
   }),
 });
 
-export const { useSendExcelCSVMutation, useLazyGetExcelQuery } = sendExcelCsv;
+export const {
+  useSendExcelCSVMutation,
+  useLazyGetExcelQuery,
+  useGenerateGraphMutation,
+  useLazyGetGraphResultQuery,
+} = sendExcelCsv;

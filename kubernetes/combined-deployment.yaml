@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: combined-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: combined
+  template:
+    metadata:
+      labels:
+        app: combined
+    spec:
+      containers:
+        - name: frontend
+          image: sudeeparyan/device-vision-frontend:latest
+          ports:
+            - containerPort: 5173
+        - name: backend
+          image: sudeeparyan/device-vision-backend:latest
+          ports:
+            - containerPort: 8000

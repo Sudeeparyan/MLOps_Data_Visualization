@@ -11,7 +11,11 @@ const initialState = {
   ExcelCsv: [],
   ExcelColumns: [],
   ProjectId: 0,
-  Error: null,
+  pgNo: 1,
+  BestFit: [],
+  ActualData: [],
+  ErrorData: [],
+  Model_Id: 0,
 };
 
 const ExcelSlice = createSlice({
@@ -19,16 +23,32 @@ const ExcelSlice = createSlice({
   initialState,
   reducers: {
     storeExcelCsv: (state, action) => {
-      state.ExcelCsv = action.payload.tableContent;
+      if (action.payload.delete) state.ExcelCsv = [];
+      state.ExcelCsv = [...state.ExcelCsv, ...action.payload.tableContent];
       state.ExcelColumns = action.payload.columns;
-      state.Error = action.payload.error;
+    },
+    storePgno: (state, action) => {
+      state.pgNo = action.payload;
     },
     storeExcelid: (state, action) => {
       state.ProjectId = action.payload.projectId;
-      state.Error = action.payload.error;
+    },
+    storeGraph: (state, action) => {
+      state.BestFit = action.payload.bestFitData;
+      state.ActualData = action.payload.actualData;
+      state.ErrorData = action.payload.errorData;
+    },
+    storeModelid: (state, action) => {
+      state.Model_Id = action.payload.modelId;
     },
   },
 });
 
-export const { storeExcelCsv, storeExcelid } = ExcelSlice.actions;
+export const {
+  storeExcelCsv,
+  storeExcelid,
+  storePgno,
+  storeGraph,
+  storeModelid,
+} = ExcelSlice.actions;
 export default ExcelSlice.reducer;

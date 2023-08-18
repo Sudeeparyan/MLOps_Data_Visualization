@@ -6,10 +6,12 @@
  */
 import Projectreducers from "../ProjectPage/ProjectReducer";
 import { sendExcelCsv } from "../ProjectPage/ProjectRtkQuery";
+import Notificationreducers from "../Notification/notificationReducer";
 
 export const rootReducers = {
   ProjectReducer: {
     [sendExcelCsv.reducerPath]: sendExcelCsv.reducer,
     Excel_Csv: Projectreducers,
+    Notify: Notificationreducers,
   },
 };

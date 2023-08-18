@@ -6,16 +6,17 @@ import "@antv/s2-react/dist/style.min.css";
  * @param {Array} data - An array of objects representing the table rows and columns.
  * @returns {JSX.Element} - The rendered Table element.
  */
-const Table = ({ columns, tableData }) => {
+const Table = ({ columns, tableData, onscroll, sheetRef }) => {
   const dataCfg = {
     fields: {
       columns: columns,
     },
     data: tableData,
   };
+
   const s2Options = {
-    width: 400,
-    height: 650,
+    width: 1000,
+    height: 600,
     interaction: {
       hoverHighlight: true,
       selectedCellsSpotlight: true,
@@ -27,12 +28,10 @@ const Table = ({ columns, tableData }) => {
       <SheetComponent
         sheetType="table"
         dataCfg={dataCfg}
+        ref={sheetRef}
         options={s2Options}
         themeCfg={{ name: "colorful" }}
-        adaptive={{
-          width: true,
-          height: true,
-        }}
+        onScroll={onscroll}
       />
     </div>
   );

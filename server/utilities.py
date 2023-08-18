@@ -27,6 +27,7 @@ def handle_errors(func):
 def save_csv_files(file, path):
     """saving files in their corresponding directory"""
     try:
+        print(path)
         file.save(path)
 
     except Exception as err:

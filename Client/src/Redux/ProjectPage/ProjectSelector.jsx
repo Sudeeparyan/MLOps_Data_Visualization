@@ -9,14 +9,33 @@ import { createSelector } from "reselect";
 
 const ProjectState = (state) => state.Excel_Csv;
 
-export const Projectselector = {
-  projectData: {
-    projectId: createSelector([ProjectState], (project) => project.ProjectId),
-    tableColumns: createSelector(
-      [ProjectState],
-      (project) => project.ExcelColumns
-    ),
-    tableData: createSelector([ProjectState], (project) => project.ExcelCsv),
-    error: createSelector([ProjectState], (project) => project.Error),
-  },
-};
+export const projectId = createSelector(
+  [ProjectState],
+  (project) => project.ProjectId
+);
+export const tableColumns = createSelector(
+  [ProjectState],
+  (project) => project.ExcelColumns
+);
+export const tableData = createSelector(
+  [ProjectState],
+  (project) => project.ExcelCsv
+);
+export const pageNo = createSelector([ProjectState], (project) => project.pgNo);
+
+export const bestFit = createSelector(
+  [ProjectState],
+  (project) => project.BestFit
+);
+export const actualData = createSelector(
+  [ProjectState],
+  (project) => project.ActualData
+);
+export const errorData = createSelector(
+  [ProjectState],
+  (project) => project.ErrorData
+);
+export const modelId = createSelector(
+  [ProjectState],
+  (project) => project.Model_Id
+);

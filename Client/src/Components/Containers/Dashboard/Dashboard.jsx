@@ -6,33 +6,31 @@
  */
 
 // React Imports
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 //Styles
 import styles from "./Dashboard.module.css";
 // Imports from antD and antV
-import { UploadOutlined } from "@ant-design/icons";
-import { message } from "antd";
+import { FileAddTwoTone } from "@ant-design/icons";
+import { Badge, Card, Tooltip } from "antd";
+
 //ReUsables
 import UploadButton from "../../Reusables/UploadButton/upploadButton";
 //Redux
-import { rootSelector } from "../../../Redux/Root/rootSelector";
 import { rootQuery } from "../../../Redux/Root/rootQuery";
+import { rootActions } from "../../../Redux/Root/rootActions";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const projectId = useSelector(rootSelector.Project.projectData.projectId);
+  const dispatch = useDispatch();
+
   //Making the upload button diable and enable
   const [disable, setDisable] = useState(false);
 
   //POST Req RTK Query to send the uploaded csv
   const [sendExcelCSV, resultCsv] =
     rootQuery.excelPage.useSendExcelCSVMutation() || {};
-  //GET Req to get the project from Backend
-  const [getExcel, resultsExcel] =
-    rootQuery.excelPage.useLazyGetExcelQuery() || {};
-
   /**
    * handleCustomRequest
    *
@@ -50,42 +48,74 @@ const Dashboard = () => {
       //sending POST Request
       const res = await sendExcelCSV(formData);
       //sending GET Request based on condition
-      if (res.data.error === null) await getExcel(res.data.projectId);
-      else {
+      if (res.data.error === null) {
+        navigate(`/Project/${res.data.projectId}`);
+        // await getExcel({ projectId: res.data.projectId, pageNo: pgno });
+      } else {
         setDisable((prev) => !prev);
-        onError(message.error("Error Uploading File"));
+        onError();
       }
     } catch (error) {
       setDisable((prev) => !prev);
-      onError(message.error("Error Uploading File"));
+      onError();
     }
   };
 
-  //Redirecting the user to another Route when GET Req is Success
-  if (resultsExcel.data) {
-    navigate(`/Excel/${projectId}`);
-  }
+  useEffect(() => {
+    dispatch(
+      rootActions.excelActions.storeExcelCsv({
+        tableContent: [],
+        columns: [],
+        delete: true,
+      }),
+      dispatch(rootActions.excelActions.storePgno(1)),
+      dispatch(
+        rootActions.excelActions.storeGraph({ graphData: [], columns: [] })
+      )
+    );
+  }, []);
 
   return (
     <div>
-      <div className={styles.heading}>
-        Upload / Drag and drop the Actual Dataset for Testing
-      </div>
+      <div className={styles.heading}></div>
       <div className={styles.content}>
-        <div>
-          <UploadButton
-            handleCustomRequest={handleCustomRequest}
-            buttonData={"New Project"}
-            accept={".csv"}
-            work={disable}
-            acceptCount={1}
-            icon={<UploadOutlined />}
-          />
-          <br></br>
-          {resultCsv.isLoading && (
-            <h4 className={styles.upload}>Uploading Please Wait...</h4>
-          )}
-        </div>
+        <Badge.Ribbon text="Device Vision" color="pink">
+          <Card
+            title="Click / Drag and drop the Actual Dataset for Testing"
+            style={{ width: "500px", fontSize: "17px" }}
+          >
+            <div style={{ width: "150px", height: "150px" }}>
+              <Tooltip
+                title="Drag and Drop here"
+                placement="rightTop"
+                color="cyan"
+                key="cyan"
+              >
+                <div style={{ height: "150px" }}>
+                  <UploadButton
+                    handleCustomRequest={handleCustomRequest}
+                    buttonData={"New Project"}
+                    accept={".csv"}
+                    work={disable}
+                    acceptCount={1}
+                    icon={
+                      <FileAddTwoTone
+                        style={{
+                          fontSize: "30px",
+                        }}
+                      />
+                    }
+                  />
+
+                  <br></br>
+                </div>
+              </Tooltip>
+            </div>
+            {resultCsv.isLoading && (
+              <h4 className={styles.upload}>Uploading Please Wait...</h4>
+            )}
+          </Card>
+        </Badge.Ribbon>
       </div>
     </div>
   );
