@@ -23,7 +23,7 @@ cors = CORS(app)
 
 
 #make it False when you are running internally ------ make it true when u r running  server pushing to github
-#my change
+#my change 1
 production=True 
 if(production):
     os.chdir("/home/SudeepAryan/DevOps_DV/server")
