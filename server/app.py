@@ -22,9 +22,9 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app)
 
 
-#make it False when u r running internally make it true when u r running  server pushing to github
-
-production=False 
+#make it False when you are running internally ------ make it true when u r running  server pushing to github
+#my change
+production=True 
 if(production):
     os.chdir("/home/SudeepAryan/DevOps_DV/server")
     
