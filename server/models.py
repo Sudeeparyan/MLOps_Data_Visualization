@@ -20,10 +20,10 @@ class Users(db.Model):
 
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_name = db.Column(db.String(50))
-    email = db.Column(db.String(50))
+    user_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
     
-    password = db.Column(db.String(50))
+    password = db.Column(db.String(50), nullable=False)
     child_project = db.relationship('Projects', back_populates='parent_users', lazy=True)
 
 
@@ -40,8 +40,8 @@ class Projects(db.Model):
 
     __tablename__ = 'projects'
     project_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    project_name = db.Column(db.String(50))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    project_name = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     
     parent_users = db.relationship('Users', back_populates='child_project')
     child_input_file = db.relationship('InputFiles', back_populates='parent_projects', lazy=True)
@@ -61,10 +61,10 @@ class InputFiles(db.Model):
     
     __tablename__ = 'input_files'
     input_file_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id'))
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id'),  nullable=False)
     parent_projects = db.relationship('Projects', back_populates='child_input_file')
     
-    file_path = db.Column(db.String(50))
+    file_path = db.Column(db.String,  nullable=False)
     for_training = db.Column(db.Boolean, default=False)
     child_results = db.relationship("Results", back_populates='parent_input_files', lazy=True) 
     child_trained_model = db.relationship("TrainedModels", back_populates='parent_input_files')
@@ -86,12 +86,12 @@ class TrainedModels(db.Model):
     """
     __tablename__ = 'trained_models'
     trained_model_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    trained_model_path = db.Column(db.String(50))
+    trained_model_path = db.Column(db.String(50), nullable=False)
     file_path = db.Column(db.String, db.ForeignKey('input_files.file_path'))
     
     parent_input_files = db.relationship('InputFiles', back_populates='child_trained_model', lazy=True)
-    x_coordinate_alias = db.Column(db.String(50))
-    y_coordinate_alias = db.Column(db.String(50))
+    x_coordinate_alias = db.Column(db.String(50), nullable=False)
+    y_coordinate_alias = db.Column(db.String(50), nullable=False)
     child_results = db.relationship("Results", back_populates='parent_trained_model', lazy=True)
     
     
@@ -109,12 +109,12 @@ class Results(db.Model):
     """
     __tablename__ = 'results'
     result_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    trained_model_id = db.Column(db.Integer, db.ForeignKey('trained_models.trained_model_id'))
+    trained_model_id = db.Column(db.Integer, db.ForeignKey('trained_models.trained_model_id'), nullable=False)
     parent_trained_model = db.relationship('TrainedModels', back_populates='child_results')
     
-    input_file_id = db.Column(db.Integer, db.ForeignKey('input_files.input_file_id'))
+    input_file_id = db.Column(db.Integer, db.ForeignKey('input_files.input_file_id'), nullable=False)
     parent_input_files = db.relationship('InputFiles', back_populates='child_results')
-    x_coordinate = db.Column(db.String(50))
-    y_coordinate = db.Column(db.String(50))
+    x_coordinate = db.Column(db.String(50), nullable=False)
+    y_coordinate = db.Column(db.String(50), nullable=False)
     
-    result_csv_path = db.Column(db.String(50))
+    result_csv_path = db.Column(db.String(50), nullable=False)

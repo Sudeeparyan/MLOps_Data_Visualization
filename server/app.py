@@ -9,20 +9,22 @@ import os
 
 # flask modules
 from flask_cors import CORS
-from flask import send_from_directory, jsonify
+from flask import send_from_directory, jsonify,request
 
 # application modules
 from page_api import create_app
 from models import db, Users
 from utilities import handle_errors
-
-
+import git
 # initializing the flask app
 app = create_app()
 app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app)
 
-production=True 
+
+#make it False when u r running internally make it true when u r running  server pushing to github
+
+production=False 
 if(production):
     os.chdir("/home/SudeepAryan/DevOps_DV/server")
     
@@ -43,22 +45,42 @@ def initialize_db():
     # creating the db within flask context
     with app.app_context():
         db.create_all()
-        new_user = Users()
+        new_user = Users(user_name='abc', email='abc@gmail.com', password='1234')
         db.session.add(new_user)
         db.session.commit()
 
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        repo = git.Repo('../')
+        origin = repo.remotes.origin
+        # Make sure 'main' branch exists locally
+        if 'main' not in repo.heads:
+            origin.refs.main.checkout(b='main')
 
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
-# @handle_errors
-# def index(path):
-#     """rendering the index page of the application"""
-#     try:
-#         with open("../dist/index.html", "r", encoding="utf-8") as file_pointer:
-#             return file_pointer.read()
+        main_branch = repo.heads.main
+        main_branch.set_tracking_branch(origin.refs.main)
+        main_branch.checkout()
+
+        # Now pull from the remote 'main' branch
+        origin.pull()
+
+        print("pull completed successfully")
+        return '', 200
+    else:
+        return '', 400
+    
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+@handle_errors
+def index(path):
+    """rendering the index page of the application"""
+    try:
+        with open("../dist/index.html", "r", encoding="utf-8") as file_pointer:
+            return file_pointer.read()
         
-#     except Exception as err:
-#         return jsonify({"error":"file can't be opened","exact_message": str(err)})
+    except Exception as err:
+        return jsonify({"error":"file can't be opened","exact_message": str(err)})
 
 
 

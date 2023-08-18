@@ -66,13 +66,13 @@ def upload_csv():
         return jsonify({"error": None, "projectId": new_project.project_id})
 
     except Exception as err:
-       
+     
         return jsonify({"error": "File uploaded is in incorrect format", "exact_message": str(err)})
 
 
 @project_page.route("/get-csv/<project_id>", methods=["GET"])
 @handle_errors
-def send_csv(project_id):
+def send_csv(project_id: int):
     """This api is for sending the csv file content
 
     Args:
@@ -89,11 +89,12 @@ def send_csv(project_id):
             project_id=project.project_id).first()
 
         try:
-           
-            chunk_size = 1000  # Define the chunk size as per your requirement
-            actual_csv = dd.read_csv(input_file.file_path, blocksize=None, low_memory=False, dtype={'Signal_Mode': 'object'})  # Read the whole file
-
-            page = int(request.args.get('page', 1))  # Get the requested page number
+            # Define the chunk size as per your requirement
+            chunk_size = 1000  
+            # Read the whole file
+            actual_csv = dd.read_csv(input_file.file_path, blocksize=None, low_memory=False, dtype={'Signal_Mode': 'object'})
+            # Get the requested page number
+            page = int(request.args.get('page', 1)) 
             start_idx = (page - 1) * chunk_size
 
             # Read the requested chunk using Dask
@@ -128,11 +129,12 @@ def send_csv(project_id):
 @handle_errors
 def delete_project():
     """
-    This API is for deleting projects and their associated CSV files
-    The project_id to be deleted should be provided in the request body as a array.
+    Delete a project and associated CSV files.
 
+    Deletes the specified project and sets its status to False. Also updates the status of the associated input file.
+    
     Returns:
-        _Json response with success message or error message
+        JSON response with success message or error message
     """
     data = request.get_json()
     project_id = data.get("project_id")
@@ -158,8 +160,14 @@ def delete_project():
 @project_page.route("/test-data", methods=['POST'])
 @handle_errors
 def test_data():
-    """Creating a training model for testing the actual csv"""
+    """
+    Create a training model for testing actual CSV data.
+
+    Creates a trained model entry and associates it with the provided project ID and input file path.
     
+    Returns:
+        JSON response with the newly created trained model ID or error message  
+    """
     project_data = request.get_json()
     project_ID = project_data.get('projectId')
     project = Projects.query.filter_by(project_id=project_ID).first()
@@ -168,7 +176,7 @@ def test_data():
         input_file = InputFiles.query.filter_by(
             project_id=project.project_id).first()
         trained_model = TrainedModels(trained_model_path="ml\\trained_models\\best_model.pkl", file_path=input_file.file_path
-                                    )
+                                    , x_coordinate_alias='x', y_coordinate_alias='y')
         db.session.add(trained_model)
         db.session.commit()
        
@@ -178,8 +186,18 @@ def test_data():
         return jsonify({"error": "Invalid projectID"})
 
 @project_page.route("/get-results/<project_id>/<trained_model_id>", methods=['GET'])
-def get_results(project_id,trained_model_id):
-    """ Using ML trained model to fetch graph data
+def get_results(project_id: int,trained_model_id: int):
+    """
+    Fetch graph data using a trained model.
+
+    Retrieves graph data including best fit, actual, and error data points using a trained model.
+
+    Args:
+        project_id (str): The ID of the project.
+        trained_model_id (str): The ID of the trained model to use.
+
+    Returns:
+        JSON response with graph data or error message
     """
     project = Projects.query.filter_by(project_id=project_id).first()
     
@@ -215,7 +233,9 @@ def get_results(project_id,trained_model_id):
                 actual_data_df.rename(columns=new_column_names, inplace=True) 
                 actual_data_df = actual_data_df.to_dict(orient='records')
                 
-                new_result = Results(trained_model_id=trained_model.trained_model_id,input_file_id=input_file.input_file_id,result_csv_path=file_path)
+                new_result = Results(trained_model_id=trained_model.trained_model_id,
+                                     input_file_id=input_file.input_file_id,x_coordinate='X',
+                                     y_coordinate='Y', result_csv_path=file_path)
                 db.session.add(new_result)
                 db.session.commit()
             
@@ -228,11 +248,6 @@ def get_results(project_id,trained_model_id):
         else:
             return jsonify({"error": "Invalid modelID"})
             
-        
     else:
         return jsonify({"error": "Invalid projectID"})
-        
-        
-        
-        
     
