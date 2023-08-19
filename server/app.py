@@ -23,13 +23,9 @@ cors = CORS(app)
 
 
 #make it False when you are running internally ------ make it true when u r running  server pushing to github
-
 # 1
 
-# 1
-# 1
-# 1
-# 1
+# 11
 # 1
 
 
