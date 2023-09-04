@@ -9,11 +9,19 @@ import { BASE_URL } from "../../Networks/baseUrl";
 import { endpointsApi } from "../../Networks/endPoints";
 import { rootActions } from "../Root/rootActions";
 
-export const sendExcelCsv = createApi({
-  reducerPath: "SendCsvApi",
+export const ProjectsApi = createApi({
+  reducerPath: "ProjectsApi",
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
   }),
+  prepareHeaders: (headers, { getState }) => {
+    const token = getState().auth.token;
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+    headers.set("Custom-Header", "Header-Value");
+    return headers;
+  },
   // Define the API endpoints for sending and receiving Excel CSV data
   endpoints: (builder) => ({
     sendExcelCSV: builder.mutation({
@@ -26,7 +34,7 @@ export const sendExcelCsv = createApi({
         try {
           const { data } = await queryFulfilled;
           if (data.error === null) {
-            dispatch(rootActions.excelActions.storeExcelid(data));
+            dispatch(rootActions.projectActions.storeProjectid(data));
           } else
             dispatch(
               rootActions.notificationActions.storeNotification({
@@ -52,15 +60,8 @@ export const sendExcelCsv = createApi({
         try {
           const { data } = await queryFulfilled;
           if (data.error === null) {
-            dispatch(rootActions.excelActions.storeExcelCsv(data));
-            dispatch(rootActions.excelActions.storePgno(data.nextPage));
-            if (data.nextPage === 2 || data.nextPage === null)
-              dispatch(
-                rootActions.notificationActions.storeNotification({
-                  type: "success",
-                  message: "File Loaded Successfully",
-                })
-              );
+            dispatch(rootActions.projectActions.storeProjectCsv(data));
+            dispatch(rootActions.projectActions.storePgno(data.nextPage));
           } else
             dispatch(
               rootActions.notificationActions.storeNotification({
@@ -87,9 +88,9 @@ export const sendExcelCsv = createApi({
       async onQueryStarted(res, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-
           if (data.error === null) {
-            dispatch(rootActions.excelActions.storeModelid(data));
+            if (!data.message)
+              dispatch(rootActions.projectActions.storeResults(data));
           } else
             dispatch(
               rootActions.notificationActions.storeNotification({
@@ -107,14 +108,18 @@ export const sendExcelCsv = createApi({
         }
       },
     }),
-    getGraphResult: builder.query({
-      query: ({ projectId, modelId }) =>
-        endpointsApi.get_graph_data + `${projectId}/${modelId}`,
+
+    getGraphResult: builder.mutation({
+      query: (resultKey) => ({
+        url: endpointsApi.getResultId,
+        method: "POST",
+        body: resultKey,
+      }),
       async onQueryStarted(res, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           if (data.error === null) {
-            dispatch(rootActions.excelActions.storeGraph(data));
+            dispatch(rootActions.projectActions.storeResultId(data));
           } else {
             dispatch(
               rootActions.notificationActions.storeNotification({
@@ -133,6 +138,31 @@ export const sendExcelCsv = createApi({
         }
       },
     }),
+
+    getModels: builder.query({
+      query: () => endpointsApi.get_Models,
+      async onQueryStarted(res, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data.error === null) {
+            dispatch(rootActions.projectActions.storeModels(data));
+          } else
+            dispatch(
+              rootActions.notificationActions.storeNotification({
+                type: "error",
+                message: data.error,
+              })
+            );
+        } catch (err) {
+          dispatch(
+            rootActions.notificationActions.storeNotification({
+              type: "error",
+              message: err.error.error,
+            })
+          );
+        }
+      },
+    }),
   }),
 });
 
@@ -140,5 +170,6 @@ export const {
   useSendExcelCSVMutation,
   useLazyGetExcelQuery,
   useGenerateGraphMutation,
-  useLazyGetGraphResultQuery,
-} = sendExcelCsv;
+  useGetGraphResultMutation,
+  useLazyGetModelsQuery,
+} = ProjectsApi;

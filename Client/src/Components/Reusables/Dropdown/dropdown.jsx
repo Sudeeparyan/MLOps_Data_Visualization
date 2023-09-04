@@ -1,7 +1,7 @@
 import React from "react";
 import { Select } from "antd";
 
-const Dropdown = ({ defaultValue, options, width, onchange }) => (
+const Dropdown = ({ defaultValue, options, width, handleChange, value }) => (
   <Select
     labelInValue
     defaultValue={{
@@ -11,8 +11,10 @@ const Dropdown = ({ defaultValue, options, width, onchange }) => (
     style={{
       width: width,
     }}
-    onChange={onchange}
+    value={value}
+    onChange={handleChange}
     options={options}
   />
 );
+
 export default Dropdown;

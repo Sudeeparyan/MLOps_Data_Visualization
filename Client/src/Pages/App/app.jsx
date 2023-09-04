@@ -23,7 +23,10 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<DashboardPage />} />
-            <Route path="/Project/:id/:modelid" element={<GraphPage />} />
+            <Route
+              path="/Project/projectId/:id/resultId/:resultId"
+              element={<GraphPage />}
+            />
             <Route path="/Project/:id" element={<Project />} />
             <Route path="*" element={<DashboardPage />} />
           </Routes>

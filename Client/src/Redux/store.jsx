@@ -5,11 +5,12 @@
  * The store includes the specified root reducer and middleware for handling API requests using 'sendExcelCsv' middleware.
  */
 import { configureStore } from "@reduxjs/toolkit";
-import { sendExcelCsv } from "./ProjectPage/ProjectRtkQuery";
+import { ProjectsApi } from "./ProjectPage/ProjectRtkQuery";
+import { GraphApi } from "./GraphPage/graphRtkQuery";
 import { rootReducers } from "./Root/rootReducer";
 
 export const store = configureStore({
   reducer: rootReducers.ProjectReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sendExcelCsv.middleware),
+    getDefaultMiddleware().concat(ProjectsApi.middleware, GraphApi.middleware),
 });

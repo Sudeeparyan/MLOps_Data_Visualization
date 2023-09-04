@@ -9,3 +9,8 @@
     padding: 5px;
     padding-left: 20px;
 }
+.logo{
+    display: flex;
+    width: 80px;
+    justify-content: space-evenly;
+}

@@ -46,6 +46,8 @@ export const Notification = ({ children }) => {
             ? "5px solid #16FF00"
             : notifyType === "error"
             ? "5px solid red"
+            : notifyType === "warning"
+            ? "5px solid #FF7315"
             : null,
         fontWeight: "bold",
       },

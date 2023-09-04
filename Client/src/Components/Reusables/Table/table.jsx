@@ -1,6 +1,5 @@
 import React from "react";
 import { SheetComponent } from "@antv/s2-react";
-import "@antv/s2-react/dist/style.min.css";
 /**
  * A reusable Table component to display tabular data.
  * @param {Array} data - An array of objects representing the table rows and columns.
@@ -15,8 +14,8 @@ const Table = ({ columns, tableData, onscroll, sheetRef }) => {
   };
 
   const s2Options = {
-    width: 1000,
-    height: 600,
+    width: window.innerWidth > 1600 ? 1600 : 1360,
+    height: window.innerWidth > 1600 ? 800 : 600,
     interaction: {
       hoverHighlight: true,
       selectedCellsSpotlight: true,

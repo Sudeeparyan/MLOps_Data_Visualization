@@ -8,47 +8,79 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  ExcelCsv: [],
-  ExcelColumns: [],
+  TableCsv: [],
+  TableColumns: [],
   ProjectId: 0,
   pgNo: 1,
   BestFit: [],
   ActualData: [],
   ErrorData: [],
-  Model_Id: 0,
+  Models: [],
+  selectedModel: 0,
+  selected_X_Alias: "",
+  selected_Y_Alias: "",
+  Results: [],
+  storeResultId: 0,
+  xLabel: "",
+  yLabel: "",
 };
 
-const ExcelSlice = createSlice({
-  name: "excel",
+const ProjectSlice = createSlice({
+  name: "project",
   initialState,
   reducers: {
-    storeExcelCsv: (state, action) => {
-      if (action.payload.delete) state.ExcelCsv = [];
-      state.ExcelCsv = [...state.ExcelCsv, ...action.payload.tableContent];
-      state.ExcelColumns = action.payload.columns;
+    storeProjectCsv: (state, action) => {
+      if (action.payload.delete) state.TableCsv = [];
+      else {
+        state.TableCsv = [...state.TableCsv, ...action.payload.tableContent];
+        state.TableColumns = action.payload.columns;
+      }
     },
     storePgno: (state, action) => {
       state.pgNo = action.payload;
     },
-    storeExcelid: (state, action) => {
+    storeProjectid: (state, action) => {
       state.ProjectId = action.payload.projectId;
     },
     storeGraph: (state, action) => {
       state.BestFit = action.payload.bestFitData;
       state.ActualData = action.payload.actualData;
       state.ErrorData = action.payload.errorData;
+      state.xLabel = action.payload.xLabel;
+      state.yLabel = action.payload.yLabel;
     },
-    storeModelid: (state, action) => {
-      state.Model_Id = action.payload.modelId;
+    storeModels: (state, action) => {
+      state.Models = action.payload.models;
+    },
+    storeTrainData: (state, action) => {
+      state.selectedModel = action.payload.model;
+    },
+    storeTrainX: (state, action) => {
+      state.selected_X_Alias = action.payload.x;
+    },
+    storeTrainY: (state, action) => {
+      state.selected_Y_Alias = action.payload.y;
+    },
+    storeResults: (state, action) => {
+      console.log(action);
+      state.Results = action.payload.results;
+    },
+    storeResultId: (state, action) => {
+      state.storeResultId = action.payload.resultId;
     },
   },
 });
 
 export const {
-  storeExcelCsv,
-  storeExcelid,
+  storeProjectCsv,
+  storeProjectid,
   storePgno,
   storeGraph,
-  storeModelid,
-} = ExcelSlice.actions;
-export default ExcelSlice.reducer;
+  storeModels,
+  storeTrainData,
+  storeTrainX,
+  storeTrainY,
+  storeResults,
+  storeResultId,
+} = ProjectSlice.actions;
+export default ProjectSlice.reducer;

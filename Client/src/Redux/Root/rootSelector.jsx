@@ -6,3 +6,4 @@
  */
 export * as notificationSelector from "../Notification/notificationSelector";
 export * as projectSelector from "../ProjectPage/ProjectSelector";
+export * as graphSelector from "../GraphPage/graphSelector";

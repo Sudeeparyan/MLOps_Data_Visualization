@@ -6,23 +6,37 @@
  */
 
 import {
-  storeExcelCsv,
-  storeExcelid,
+  storeProjectCsv,
+  storeProjectid,
   storePgno,
   storeGraph,
-  storeModelid,
+  storeModels,
+  storeTrainData,
+  storeTrainX,
+  storeResults,
+  storeTrainY,
+  storeResultId,
 } from "../ProjectPage/ProjectReducer";
 import { storeNotification } from "../Notification/notificationReducer";
+import { storeResultGraph } from "../GraphPage/graphReducer";
 
 export const rootActions = {
-  excelActions: {
-    storeExcelCsv,
-    storeExcelid,
+  projectActions: {
+    storeProjectCsv,
+    storeProjectid,
     storePgno,
     storeGraph,
-    storeModelid,
+    storeTrainData,
+    storeModels,
+    storeTrainX,
+    storeResults,
+    storeTrainY,
+    storeResultId,
   },
   notificationActions: {
     storeNotification,
+  },
+  graphActions: {
+    storeResultGraph,
   },
 };

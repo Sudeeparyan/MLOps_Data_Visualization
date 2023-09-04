@@ -1,10 +1,3 @@
-/**
- * Excel Component
- *
- * The Excel component is a React functional component that represents the Excel page for uploading and processing CSV files.
- * @returns {JSX.Element} The rendered Excel element.
- */
-
 // React Imports
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -14,7 +7,6 @@ import styles from "./Dashboard.module.css";
 // Imports from antD and antV
 import { FileAddTwoTone } from "@ant-design/icons";
 import { Badge, Card, Tooltip } from "antd";
-
 //ReUsables
 import UploadButton from "../../Reusables/UploadButton/upploadButton";
 //Redux
@@ -63,14 +55,14 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(
-      rootActions.excelActions.storeExcelCsv({
+      rootActions.projectActions.storeProjectCsv({
         tableContent: [],
         columns: [],
         delete: true,
       }),
-      dispatch(rootActions.excelActions.storePgno(1)),
+      dispatch(rootActions.projectActions.storePgno(1)),
       dispatch(
-        rootActions.excelActions.storeGraph({ graphData: [], columns: [] })
+        rootActions.projectActions.storeGraph({ graphData: [], columns: [] })
       )
     );
   }, []);
